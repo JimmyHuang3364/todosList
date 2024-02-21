@@ -116,7 +116,7 @@ const TodoItem = ({ todo, onSave, onDelete, onToggleDone, onChangeMode }) => {
       <div className="task-item-checked">
         <span
           className="icon icon-checked"
-          onClick={() => onToggleDone?.(todo.id)}
+          onClick={() => onToggleDone?.({id: todo.id, isDone: todo.isDone})}
         />
       </div>
       <div

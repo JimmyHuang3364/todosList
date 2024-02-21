@@ -3,17 +3,20 @@
     {
       "title": "Learn react-router",
       "isDone": true,
-      "id": 1
+      "id": 1,
+      "isDown": true
     },
     {
       "title": "Learn to create custom hooks",
-      "isDone": false,
-      "id": 2
+      "isDone": true,
+      "id": 2,
+      "isDown": true
     },
     {
       "title": "Learn to use context",
       "isDone": true,
-      "id": 3
+      "id": 3,
+      "isDown": true
     },
     {
       "title": "Learn to implement auth",

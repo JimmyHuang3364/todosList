@@ -1,47 +1,32 @@
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
-import { useState } from 'react';
-
-const dummyTodos = [
-  {
-    title: 'Learn react-router',
-    isDone: true,
-    id: 1,
-  },
-  {
-    title: 'Learn to create custom hooks',
-    isDone: false,
-    id: 2,
-  },
-  {
-    title: 'Learn to use context',
-    isDone: true,
-    id: 3,
-  },
-  {
-    title: 'Learn to implement auth',
-    isDone: false,
-    id: 4,
-  },
-];
+import { useState, useEffect } from 'react';
+import { todosAPI } from '../api/todos'
 
 const TodoPage = () => {
+  const { getTodos, createTodo, deleteTodo, updateTodo } = todosAPI
   const [inputValue, setInputValue] = useState('')
-  const [todos, setTodos] = useState(dummyTodos)
+  const [todos, setTodos] = useState([])
   const handleChange = value => {  setInputValue(value)  }
-  const handleAddTodo = e => { 
+  // 新增
+  const handleAddTodo = async e => { 
     if (inputValue.length === 0) return
+    const todo = await createTodo(inputValue, false)
     setTodos((prevTodos) => {
       return [
         ...prevTodos,
         {
-          id: Math.random() * 100,
-          title: inputValue,
-          isDone: false,
+          ...todo,
+          isEdit: false
         }]
     })
     setInputValue('');
   }
-  const handleToggleDone = (id) => {
+  // 更改狀態
+  const handleToggleDone = async (id, isDone) => {
+    const prams = {
+      isDone: !isDone
+    }
+    await updateTodo(id, prams)
     setTodos(prevTodos => {
       return prevTodos.map(todo => {
         if (todo.id === id)
@@ -53,6 +38,7 @@ const TodoPage = () => {
       })
     })
   }
+  // 啟閉編輯
   const handleChangeMode = (id, isEdit) => {
     setTodos(prevTodos => {
       return prevTodos.map(todo => {
@@ -65,7 +51,12 @@ const TodoPage = () => {
       })
     })
   }
-  const handleSave = (id, title) => {
+  // 更新 title
+  const handleSave = async (id, title) => {
+    const prams = {
+      title
+    }
+    await updateTodo(id, prams)
     setTodos(prevTodos => {
       return prevTodos.map(todo => {
         if (todo.id === id)
@@ -78,11 +69,22 @@ const TodoPage = () => {
       })
     })
   }
-  const handleDelete = (id) => {
+  // 刪除
+  const handleDelete = async (id) => {
+    await deleteTodo(id)
     setTodos(prevTodos => {
       return prevTodos.filter(todo => todo.id !== id)
     })
   }
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const todos = await getTodos()
+      setTodos(todos.map(todo => ({...todo, isEdit: false})))
+    }
+    fetchTodos()
+  }, [getTodos]);
+
   return (
     <div>
       TodoPage
